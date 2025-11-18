@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ titulo }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        .log-box { background-color: #f4f4f4; border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; white-space: pre-wrap; }
+        .graph-container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+        .graph-item { border: 1px solid #ccc; padding: 10px; text-align: center; }
+        .table-bordered { width: 100%; border-collapse: collapse; }
+        .table-bordered th, .table-bordered td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+    <h1>{{ titulo }}</h1>
+    
+    <h2>Resumen de Ejecución (Logs)</h2>
+    <div class="log-box">
+        {% for log in logs %}
+            {{ log }}<br>
+        {% empty %}
+            <p>No se generaron logs de ejecución.</p>
+        {% endfor %}
+    </div>
+
+    {% if datos_cargados %}
+        
+        <h2>Primeras Filas del Dataset (df.head())</h2>
+        {# Django renderiza el HTML generado por pandas #}
+        {{ df_head_html|safe }} 
+
+        <h2>Comparación de Distribuciones (protocol_type)</h2>
+        <p>Asegúrate de que los histogramas muestren una distribución similar (Stratified Sampling).</p>
+        
+        <div class="graph-container">
+            {% for name, image_base64 in graficas.items %}
+                <div class="graph-item">
+                    <h3>{{ name }} Set</h3>
+                    <img src="data:image/png;base64,{{ image_base64 }}" alt="Gráfico de {{ name }}" style="max-width: 100%; height: auto;">
+                </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <p style="color: red; font-weight: bold;">El procesamiento no se pudo completar debido a un error. Por favor, revisa el log.</p>
+    {% endif %}
+
+</body>
+</html>
