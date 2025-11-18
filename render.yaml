@@ -1,0 +1,10 @@
+# Simple Render service descriptor - optional but handy for reproducible deploys
+services:
+  - type: web
+    name: 07-web
+    env: python
+    plan: free
+    # Install dependencies and collect static files during build
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    # Correct gunicorn start command (use $PORT provided by Render)
+    startCommand: gunicorn configuracion_web.wsgi:application --bind 0.0.0.0:$PORT
